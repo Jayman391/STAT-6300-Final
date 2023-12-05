@@ -1,0 +1,153 @@
+Index: choice_model.ipynb
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/choice_model.ipynb b/choice_model.ipynb
+--- a/choice_model.ipynb	
++++ b/choice_model.ipynb	
+@@ -839,23 +839,133 @@
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 190,
++   "execution_count": 160,
+    "metadata": {
+     "ExecuteTime": {
+-     "end_time": "2023-11-26T19:48:59.286174Z",
+-     "start_time": "2023-11-26T19:48:05.451634Z"
++     "end_time": "2023-11-28T22:32:26.403022Z",
++     "start_time": "2023-11-28T22:32:24.655664Z"
+     }
+    },
+    "outputs": [
+     {
+-     "data": {
+-      "text/plain": [
+-       "\"import pymc as pm\\nimport arviz as az\\nimport warnings\\n\\nwarnings.simplefilter(action='ignore', category=FutureWarning)\\nwarnings.simplefilter(action='ignore', category=UserWarning)\\n\\n# multinomial logit model for group interactions\\nnum_groups = len(groups)\\ny = []\\nX = []\\n\\nfor user in users:\\n    y.append(user.interaction_history[-1])\\n    # every interaction but the last one\\n    X.append(np.bincount(user.interaction_history[:-1], minlength=num_groups))\\n\\n\\nX = pd.DataFrame(X)\\nX.fillna(0, inplace=True)\\n\\ny = pd.DataFrame(y)\\ny = y.iloc[:,0]\\n\\n# drop first column if sum is 0\\nif X.iloc[:,0].sum() == 0:\\n    X = X.iloc[:,1:]\\n    if num_groups != X.shape[1]:\\n        num_groups -= (X.shape[1] - num_groups)\\n\\nfor row in range(len(X)):\\n    X.iloc[row] = X.iloc[row] / X.iloc[row].sum()\\n\\nX.fillna(0, inplace=True)\\nX = (X - X.mean()) / X.std()\\nX.fillna(0, inplace=True)\\n\\n\\nmodel = pm.Model()\\n\\n\\nwith model:\\n    try:\\n\\n        indices = pm.Data('index', list(range(len(X))), dims='user')\\n        # Define your data within the model\\n        X_data = pm.Data('X_data', X)\\n        y_data = pm.Data('y_data', y)\\n\\n        # Model parameters\\n        \\n        alpha = pm.Exponential('alpha', lam=np.max(group_relative_frequency), shape=num_groups)\\n\\n        beta_mu = pm.Normal('beta_mu', mu=1, sigma=10, shape=num_groups)\\n        beta_sd = pm.TruncatedNormal('beta_sd', lower=0, mu=5, sigma=2.5, shape=num_groups)\\n\\n        beta = pm.Normal('beta', mu=beta_mu, sigma=beta_sd, shape=(num_groups, num_groups))\\n\\n        # Computing mu\\n        mu = alpha + pm.math.dot(X_data, beta) \\n\\n        # A numerically stable softmax\\n        mu_max = pm.math.max(mu, axis=1, keepdims=True)\\n        p = pm.Deterministic('p', pm.math.exp(mu - mu_max) / pm.math.sum(pm.math.exp(mu - mu_max), axis=1, keepdims=True))\\n\\n        # Categorical distribution for observed data\\n        y_obs = pm.Categorical('y_obs', p=p, observed=y_data, dims='user')\\n\\n        # Sampling\\n        trace = pm.sample(1000)\\n        posterior_predictive = pm.sample_posterior_predictive(trace)\\n\\n    except pm.exceptions.SamplingError:\\n        model.debug(verbose=True)\\n\\ny_pred = np.rint(posterior_predictive['posterior_predictive']['y_obs'].mean(axis=(0,1))) \\n\\nplt.scatter(y, y_pred)\\nplt.xlabel('Actual Group ID')\\nplt.ylabel('Predicted Group ID')\\nplt.show()\\n\\nplt.scatter(y, y_pred - y)\\nplt.xlabel('Actual Group ID')\\nplt.ylabel('Residual')\\nplt.show()\\n\\nprint(az.summary(trace))\\n\\n# kind of wack way to do it but shows r_hat distribution with the first nonzero value being 1 and incrementing by 0.01\\n# plt.plot(np.bincount(np.array(az.summary(trace)['r_hat'] * 100).astype(int)))\""
+-      ]
+-     },
+-     "execution_count": 190,
+-     "metadata": {},
+-     "output_type": "execute_result"
++     "name": "stdout",
++     "output_type": "stream",
++     "text": [
++      "point={'alpha_log__': array([1.16202696, 1.16202696, 1.16202696, 1.16202696, 1.16202696,\n",
++      "       1.16202696, 1.16202696, 1.16202696]), 'beta_mu': array([1., 1., 1., 1., 1., 1., 1., 1.]), 'beta_sd_interval__': array([0., 0., 0., 0., 0., 0., 0., 0.]), 'beta': array([[1., 1., 1., 1., 1., 1., 1., 1.],\n",
++      "       [1., 1., 1., 1., 1., 1., 1., 1.],\n",
++      "       [1., 1., 1., 1., 1., 1., 1., 1.],\n",
++      "       [1., 1., 1., 1., 1., 1., 1., 1.],\n",
++      "       [1., 1., 1., 1., 1., 1., 1., 1.],\n",
++      "       [1., 1., 1., 1., 1., 1., 1., 1.],\n",
++      "       [1., 1., 1., 1., 1., 1., 1., 1.],\n",
++      "       [1., 1., 1., 1., 1., 1., 1., 1.]])}\n",
++      "The variable y_obs has the following parameters:\n",
++      "0: Softmax{axis=1} [id A] <Matrix(float64, shape=(71, 8))> 'p'\n",
++      " └─ Sub [id B] <Matrix(float64, shape=(71, 8))>\n",
++      "    ├─ Add [id C] <Matrix(float64, shape=(71, 8))>\n",
++      "    │  ├─ Exp [id D] <Matrix(float64, shape=(1, 8))>\n",
++      "    │  │  └─ ExpandDims{axis=0} [id E] <Matrix(float64, shape=(1, 8))>\n",
++      "    │  │     └─ alpha_log__ [id F] <Vector(float64, shape=(8,))>\n",
++      "    │  └─ Dot22 [id G] <Matrix(float64, shape=(71, 8))>\n",
++      "    │     ├─ X_data{[[ 1.16634 ... 0442e-01]]} [id H] <Matrix(float64, shape=(71, 8))>\n",
++      "    │     └─ beta [id I] <Matrix(float64, shape=(8, 8))>\n",
++      "    └─ ExpandDims{axis=1} [id J] <Matrix(float64, shape=(71, 1))>\n",
++      "       └─ Max{axis=1} [id K] <Vector(float64, shape=(71,))> 'max'\n",
++      "          └─ Add [id C] <Matrix(float64, shape=(71, 8))>\n",
++      "             └─ ···\n",
++      "The parameters evaluate to:\n",
++      "0: [[0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]\n",
++      " [0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125]]\n",
++      "Some of the observed values of variable y_obs are associated with a non-finite logp:\n"
++     ]
++    },
++    {
++     "ename": "IndexError",
++     "evalue": "too many indices for array: array is 1-dimensional, but 2 were indexed",
++     "output_type": "error",
++     "traceback": [
++      "\u001B[0;31m---------------------------------------------------------------------------\u001B[0m",
++      "\u001B[0;31mSamplingError\u001B[0m                             Traceback (most recent call last)",
++      "Cell \u001B[0;32mIn[160], line 70\u001B[0m\n\u001B[1;32m     69\u001B[0m \u001B[38;5;66;03m# Sampling\u001B[39;00m\n\u001B[0;32m---> 70\u001B[0m trace \u001B[38;5;241m=\u001B[39m \u001B[43mpm\u001B[49m\u001B[38;5;241;43m.\u001B[39;49m\u001B[43msample\u001B[49m\u001B[43m(\u001B[49m\u001B[38;5;241;43m1000\u001B[39;49m\u001B[43m)\u001B[49m\n\u001B[1;32m     71\u001B[0m posterior_predictive \u001B[38;5;241m=\u001B[39m pm\u001B[38;5;241m.\u001B[39msample_posterior_predictive(trace)\n",
++      "File \u001B[0;32m~/Library/Python/3.11/lib/python/site-packages/pymc/sampling/mcmc.py:744\u001B[0m, in \u001B[0;36msample\u001B[0;34m(draws, tune, chains, cores, random_seed, progressbar, step, nuts_sampler, initvals, init, jitter_max_retries, n_init, trace, discard_tuned_samples, compute_convergence_checks, keep_warning_stat, return_inferencedata, idata_kwargs, nuts_sampler_kwargs, callback, mp_ctx, model, **kwargs)\u001B[0m\n\u001B[1;32m    743\u001B[0m \u001B[38;5;28;01mfor\u001B[39;00m ip \u001B[38;5;129;01min\u001B[39;00m initial_points:\n\u001B[0;32m--> 744\u001B[0m     \u001B[43mmodel\u001B[49m\u001B[38;5;241;43m.\u001B[39;49m\u001B[43mcheck_start_vals\u001B[49m\u001B[43m(\u001B[49m\u001B[43mip\u001B[49m\u001B[43m)\u001B[49m\n\u001B[1;32m    745\u001B[0m     _check_start_shape(model, ip)\n",
++      "File \u001B[0;32m~/Library/Python/3.11/lib/python/site-packages/pymc/model/core.py:1694\u001B[0m, in \u001B[0;36mModel.check_start_vals\u001B[0;34m(self, start)\u001B[0m\n\u001B[1;32m   1693\u001B[0m \u001B[38;5;28;01mif\u001B[39;00m \u001B[38;5;129;01mnot\u001B[39;00m \u001B[38;5;28mall\u001B[39m(np\u001B[38;5;241m.\u001B[39misfinite(v) \u001B[38;5;28;01mfor\u001B[39;00m v \u001B[38;5;129;01min\u001B[39;00m initial_eval\u001B[38;5;241m.\u001B[39mvalues()):\n\u001B[0;32m-> 1694\u001B[0m     \u001B[38;5;28;01mraise\u001B[39;00m SamplingError(\n\u001B[1;32m   1695\u001B[0m         \u001B[38;5;124m\"\u001B[39m\u001B[38;5;124mInitial evaluation of model at starting point failed!\u001B[39m\u001B[38;5;130;01m\\n\u001B[39;00m\u001B[38;5;124m\"\u001B[39m\n\u001B[1;32m   1696\u001B[0m         \u001B[38;5;124mf\u001B[39m\u001B[38;5;124m\"\u001B[39m\u001B[38;5;124mStarting values:\u001B[39m\u001B[38;5;130;01m\\n\u001B[39;00m\u001B[38;5;132;01m{\u001B[39;00melem\u001B[38;5;132;01m}\u001B[39;00m\u001B[38;5;130;01m\\n\u001B[39;00m\u001B[38;5;130;01m\\n\u001B[39;00m\u001B[38;5;124m\"\u001B[39m\n\u001B[1;32m   1697\u001B[0m         \u001B[38;5;124mf\u001B[39m\u001B[38;5;124m\"\u001B[39m\u001B[38;5;124mLogp initial evaluation results:\u001B[39m\u001B[38;5;130;01m\\n\u001B[39;00m\u001B[38;5;132;01m{\u001B[39;00minitial_eval\u001B[38;5;132;01m}\u001B[39;00m\u001B[38;5;130;01m\\n\u001B[39;00m\u001B[38;5;124m\"\u001B[39m\n\u001B[1;32m   1698\u001B[0m         \u001B[38;5;124m\"\u001B[39m\u001B[38;5;124mYou can call `model.debug()` for more details.\u001B[39m\u001B[38;5;124m\"\u001B[39m\n\u001B[1;32m   1699\u001B[0m     )\n",
++      "\u001B[0;31mSamplingError\u001B[0m: Initial evaluation of model at starting point failed!\nStarting values:\n{'alpha_log__': array([1.16202696, 1.16202696, 1.16202696, 1.16202696, 1.16202696,\n       1.16202696, 1.16202696, 1.16202696]), 'beta_mu': array([1., 1., 1., 1., 1., 1., 1., 1.]), 'beta_sd_interval__': array([0., 0., 0., 0., 0., 0., 0., 0.]), 'beta': array([[1., 1., 1., 1., 1., 1., 1., 1.],\n       [1., 1., 1., 1., 1., 1., 1., 1.],\n       [1., 1., 1., 1., 1., 1., 1., 1.],\n       [1., 1., 1., 1., 1., 1., 1., 1.],\n       [1., 1., 1., 1., 1., 1., 1., 1.],\n       [1., 1., 1., 1., 1., 1., 1., 1.],\n       [1., 1., 1., 1., 1., 1., 1., 1.],\n       [1., 1., 1., 1., 1., 1., 1., 1.]])}\n\nLogp initial evaluation results:\n{'alpha': -8.0, 'beta_mu': -25.77, 'beta_sd': -24.74, 'beta': -58.81, 'y_obs': -inf}\nYou can call `model.debug()` for more details.",
++      "\nDuring handling of the above exception, another exception occurred:\n",
++      "\u001B[0;31mIndexError\u001B[0m                                Traceback (most recent call last)",
++      "Cell \u001B[0;32mIn[160], line 74\u001B[0m\n\u001B[1;32m     71\u001B[0m         posterior_predictive \u001B[38;5;241m=\u001B[39m pm\u001B[38;5;241m.\u001B[39msample_posterior_predictive(trace)\n\u001B[1;32m     73\u001B[0m     \u001B[38;5;28;01mexcept\u001B[39;00m pm\u001B[38;5;241m.\u001B[39mexceptions\u001B[38;5;241m.\u001B[39mSamplingError:\n\u001B[0;32m---> 74\u001B[0m         \u001B[43mmodel\u001B[49m\u001B[38;5;241;43m.\u001B[39;49m\u001B[43mdebug\u001B[49m\u001B[43m(\u001B[49m\u001B[43mverbose\u001B[49m\u001B[38;5;241;43m=\u001B[39;49m\u001B[38;5;28;43;01mTrue\u001B[39;49;00m\u001B[43m)\u001B[49m\n\u001B[1;32m     76\u001B[0m y_pred \u001B[38;5;241m=\u001B[39m np\u001B[38;5;241m.\u001B[39mrint(posterior_predictive[\u001B[38;5;124m'\u001B[39m\u001B[38;5;124mposterior_predictive\u001B[39m\u001B[38;5;124m'\u001B[39m][\u001B[38;5;124m'\u001B[39m\u001B[38;5;124my_obs\u001B[39m\u001B[38;5;124m'\u001B[39m]\u001B[38;5;241m.\u001B[39mmean(axis\u001B[38;5;241m=\u001B[39m(\u001B[38;5;241m0\u001B[39m,\u001B[38;5;241m1\u001B[39m))) \n\u001B[1;32m     78\u001B[0m plt\u001B[38;5;241m.\u001B[39mscatter(y, y_pred)\n",
++      "File \u001B[0;32m~/Library/Python/3.11/lib/python/site-packages/pymc/model/core.py:1867\u001B[0m, in \u001B[0;36mModel.debug\u001B[0;34m(self, point, fn, verbose)\u001B[0m\n\u001B[1;32m   1863\u001B[0m print_(\n\u001B[1;32m   1864\u001B[0m     \u001B[38;5;124mf\u001B[39m\u001B[38;5;124m\"\u001B[39m\u001B[38;5;124mSome of the\u001B[39m\u001B[38;5;132;01m{\u001B[39;00mobserved\u001B[38;5;132;01m}\u001B[39;00m\u001B[38;5;124mvalues of variable \u001B[39m\u001B[38;5;132;01m{\u001B[39;00mrv\u001B[38;5;132;01m}\u001B[39;00m\u001B[38;5;124m are associated with a non-finite \u001B[39m\u001B[38;5;132;01m{\u001B[39;00mfn\u001B[38;5;132;01m}\u001B[39;00m\u001B[38;5;124m:\u001B[39m\u001B[38;5;124m\"\u001B[39m\n\u001B[1;32m   1865\u001B[0m )\n\u001B[1;32m   1866\u001B[0m mask \u001B[38;5;241m=\u001B[39m \u001B[38;5;241m~\u001B[39mnp\u001B[38;5;241m.\u001B[39misfinite(rv_fn_eval)\n\u001B[0;32m-> 1867\u001B[0m \u001B[38;5;28;01mfor\u001B[39;00m value, fn_eval \u001B[38;5;129;01min\u001B[39;00m \u001B[38;5;28mzip\u001B[39m(\u001B[43mvalues\u001B[49m\u001B[43m[\u001B[49m\u001B[43mmask\u001B[49m\u001B[43m]\u001B[49m, rv_fn_eval[mask]):\n\u001B[1;32m   1868\u001B[0m     print_(\u001B[38;5;124mf\u001B[39m\u001B[38;5;124m\"\u001B[39m\u001B[38;5;124m value = \u001B[39m\u001B[38;5;132;01m{\u001B[39;00mvalue\u001B[38;5;132;01m}\u001B[39;00m\u001B[38;5;124m -> \u001B[39m\u001B[38;5;132;01m{\u001B[39;00mfn\u001B[38;5;132;01m}\u001B[39;00m\u001B[38;5;124m = \u001B[39m\u001B[38;5;132;01m{\u001B[39;00mfn_eval\u001B[38;5;132;01m}\u001B[39;00m\u001B[38;5;124m\"\u001B[39m)\n\u001B[1;32m   1869\u001B[0m print_()\n",
++      "\u001B[0;31mIndexError\u001B[0m: too many indices for array: array is 1-dimensional, but 2 were indexed"
++     ]
+     }
+    ],
+    "source": [
