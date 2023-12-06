@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4dea48f8-d6f9-4a4c-89c6-ed821d5cd275" name="Changes" comment="Now showing trace plots">
-      <change beforePath="$PROJECT_DIR$/.idea/jupyter-settings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jupyter-settings.xml" afterDir="false" />
+    <list default="true" id="4dea48f8-d6f9-4a4c-89c6-ed821d5cd275" name="Changes" comment="stan works for community regression">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/choice_model.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/choice_model.ipynb" afterDir="false" />
     </list>
@@ -54,7 +53,7 @@
       <updated>1701722568742</updated>
       <workItem from="1701722571048" duration="11552000" />
       <workItem from="1701794315432" duration="50000" />
-      <workItem from="1701799994052" duration="17878000" />
+      <workItem from="1701799994052" duration="19427000" />
     </task>
     <task id="LOCAL-00001" summary="Code is a mess right now still working on splitting and looping all groups">
       <option name="closed" value="true" />
@@ -104,7 +103,15 @@
       <option name="project" value="LOCAL" />
       <updated>1701878570322</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="stan works for community regression">
+      <option name="closed" value="true" />
+      <created>1701898966910</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1701898966910</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -116,6 +123,7 @@
     <MESSAGE value="fixed some more" />
     <MESSAGE value="changed communities to seperate models" />
     <MESSAGE value="Now showing trace plots" />
-    <option name="LAST_COMMIT_MESSAGE" value="Now showing trace plots" />
+    <MESSAGE value="stan works for community regression" />
+    <option name="LAST_COMMIT_MESSAGE" value="stan works for community regression" />
   </component>
 </project>
