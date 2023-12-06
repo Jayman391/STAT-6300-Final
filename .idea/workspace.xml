@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4dea48f8-d6f9-4a4c-89c6-ed821d5cd275" name="Changes" comment="fixed some more">
+    <list default="true" id="4dea48f8-d6f9-4a4c-89c6-ed821d5cd275" name="Changes" comment="changed communities to seperate models">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/choice_model.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/choice_model.ipynb" afterDir="false" />
     </list>
@@ -53,7 +53,7 @@
       <updated>1701722568742</updated>
       <workItem from="1701722571048" duration="11552000" />
       <workItem from="1701794315432" duration="50000" />
-      <workItem from="1701799994052" duration="10320000" />
+      <workItem from="1701799994052" duration="12007000" />
     </task>
     <task id="LOCAL-00001" summary="Code is a mess right now still working on splitting and looping all groups">
       <option name="closed" value="true" />
@@ -79,7 +79,15 @@
       <option name="project" value="LOCAL" />
       <updated>1701807209490</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="changed communities to seperate models">
+      <option name="closed" value="true" />
+      <created>1701872890914</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1701872890914</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -89,6 +97,7 @@
     <MESSAGE value="Code is a mess right now still working on splitting and looping all groups" />
     <MESSAGE value="Got loop to work" />
     <MESSAGE value="fixed some more" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed some more" />
+    <MESSAGE value="changed communities to seperate models" />
+    <option name="LAST_COMMIT_MESSAGE" value="changed communities to seperate models" />
   </component>
 </project>
