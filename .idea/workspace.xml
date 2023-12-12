@@ -4,8 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4dea48f8-d6f9-4a4c-89c6-ed821d5cd275" name="Changes" comment="needs to be in a different notebook but works">
+    <list default="true" id="4dea48f8-d6f9-4a4c-89c6-ed821d5cd275" name="Changes" comment="working on prior predictive check">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/1_1_0.2_0.1/1/community_interactions.csv" beforeDir="false" afterPath="$PROJECT_DIR$/1_1_0.2_0.1/1/community_interactions.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/1_1_0.2_0.1/1/group_interactions.csv" beforeDir="false" afterPath="$PROJECT_DIR$/1_1_0.2_0.1/1/group_interactions.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/1_1_0.2_0.1/1/simulation_data.csv" beforeDir="false" afterPath="$PROJECT_DIR$/1_1_0.2_0.1/1/simulation_data.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/1_1_0.2_0.1/1/user_interactions.csv" beforeDir="false" afterPath="$PROJECT_DIR$/1_1_0.2_0.1/1/user_interactions.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/choice_model.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/choice_model.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -54,7 +58,7 @@
       <workItem from="1701722571048" duration="11552000" />
       <workItem from="1701794315432" duration="50000" />
       <workItem from="1701799994052" duration="19928000" />
-      <workItem from="1702324937975" duration="5820000" />
+      <workItem from="1702324937975" duration="11312000" />
     </task>
     <task id="LOCAL-00001" summary="Code is a mess right now still working on splitting and looping all groups">
       <option name="closed" value="true" />
@@ -128,7 +132,15 @@
       <option name="project" value="LOCAL" />
       <updated>1701925423070</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="working on prior predictive check">
+      <option name="closed" value="true" />
+      <created>1702331495368</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1702331495368</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -143,6 +155,7 @@
     <MESSAGE value="stan works for community regression" />
     <MESSAGE value="getting somewhere" />
     <MESSAGE value="needs to be in a different notebook but works" />
-    <option name="LAST_COMMIT_MESSAGE" value="needs to be in a different notebook but works" />
+    <MESSAGE value="working on prior predictive check" />
+    <option name="LAST_COMMIT_MESSAGE" value="working on prior predictive check" />
   </component>
 </project>
